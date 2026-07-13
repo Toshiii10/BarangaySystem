@@ -1,6 +1,5 @@
 package com.barangay.system;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -8,19 +7,23 @@ import java.util.List;
 @RequestMapping("/api/documents") // Base URL for documents
 public class DocumentRequestController {
 
-    @Autowired
-    private DocumentRequestService documentService;
+    private final DocumentRequestService documentService;
+
+    // Constructor Injection
+    public DocumentRequestController(DocumentRequestService documentService) {
+        this.documentService = documentService;
+    }
 
     // POST request to http://localhost:8080/api/documents/request/1
-    // The "1" at the end is the Resident ID
     @PostMapping("/request/{residentId}")
     public DocumentRequest requestDocument(@PathVariable Long residentId, @RequestBody DocumentRequest request) {
         return documentService.createRequest(residentId, request);
     }
 
     // GET request to http://localhost:8080/api/documents/pending
+    // Added <DocumentRequest> to fix the raw type warning
     @GetMapping("/pending")
-    public List getPendingRequests() {
+    public List<DocumentRequest> getPendingRequests() {
         return documentService.getPendingRequests();
     }
 }

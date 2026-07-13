@@ -1,19 +1,19 @@
 package com.barangay.system;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class BlotterService {
 
-    @Autowired
-    private BlotterRecordRepository blotterRepository;
+    private final BlotterRecordRepository blotterRepository;
+    private final ResidentRepository residentRepository;
 
-    @Autowired
-    private ResidentRepository residentRepository;
+    // Constructor Injection
+    public BlotterService(BlotterRecordRepository blotterRepository, ResidentRepository residentRepository) {
+        this.blotterRepository = blotterRepository;
+        this.residentRepository = residentRepository;
+    }
 
     // File a new blotter record
     public BlotterRecord fileBlotter(Long complainantId, BlotterRecord record) {
