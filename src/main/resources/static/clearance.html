@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barangay Clearance Preview</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* A4 Paper Dimensions and Print Styling */
+        body {
+            background-color: #525659;
+            font-family: "Times New Roman", Times, serif;
+        }
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm;
+            margin: 10mm auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        .header-text {
+            text-align: center;
+            line-height: 1.2;
+        }
+        .doc-title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 24pt;
+            margin: 30px 0;
+            letter-spacing: 2px;
+            text-decoration: underline;
+        }
+        .content-text {
+            font-size: 14pt;
+            line-height: 2;
+            text-align: justify;
+            text-indent: 50px;
+        }
+        .signature-block {
+            margin-top: 60px;
+        }
+        .thumbmark-box {
+            border: 1px solid #000;
+            width: 120px;
+            height: 120px;
+            text-align: center;
+            padding-top: 45px;
+            font-size: 10pt;
+            color: #555;
+        }
+        /* When printing or converting to PDF, hide background and buttons */
+        @media print {
+            body { background-color: transparent; }
+            .page { box-shadow: none; margin: 0; padding: 0; width: 100%; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Controls for previewing -->
+    <div class="container text-center my-3 no-print">
+        <button onclick="window.print()" class="btn btn-success">Print / Save as PDF (Browser)</button>
+        <a href="index.html" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+
+    <!-- The A4 Document Page -->
+    <div class="page">
+        <!-- Official Header -->
+        <div class="header-text mb-4">
+            <p class="mb-0">Republic of the Philippines</p>
+            <p class="mb-0">Province of Calabarzon</p>
+            <p class="mb-0">Municipality of San Mateo</p>
+            <p class="fw-bold fs-5 mb-0">BARANGAY LUNTIAN</p>
+            <p class="fst-italic mt-1">OFFICE OF THE PUNONG BARANGAY</p>
+        </div>
+
+        <hr class="border border-dark border-2 opacity-75">
+
+        <!-- Document Title -->
+        <div class="doc-title">BARANGAY CLEARANCE</div>
+
+        <!-- Salutation -->
+        <p class="fw-bold fs-5 mt-4">TO WHOM IT MAY CONCERN:</p>
+
+        <!-- Body Paragraph -->
+        <p class="content-text">
+            This is to certify that <span id="fullName" class="fw-bold text-uppercase border-bottom border-dark px-2">LOADING...</span>, 
+            of legal age, <span id="civilStatus" class="fw-bold border-bottom border-dark px-2">...</span>, Filipino, 
+            and a bona fide resident of <span id="zone" class="fw-bold border-bottom border-dark px-2">...</span>, 
+            Barangay Luntian, San Mateo, is known to be of good moral character and law-abiding citizen in the community.
+        </p>
+
+        <p class="content-text">
+            This certification is issued upon the request of the above-named person for the purpose of 
+            <span id="purpose" class="fw-bold text-uppercase border-bottom border-dark px-2">GENERAL REQUIREMENT</span> 
+            and for whatever legal intent it may serve.
+        </p>
+
+        <!-- Date Issued -->
+        <p class="content-text mt-4">
+            Issued this <span id="issueDate" class="fw-bold">...</span> at Barangay Luntian, San Mateo.
+        </p>
+
+        <!-- Signature and Footer Block -->
+        <div class="row signature-block">
+            <div class="col-6">
+                <div class="thumbmark-box mb-2">Right Thumbmark</div>
+                <p class="mb-0">Applicant's Signature: ___________________</p>
+            </div>
+            <div class="col-6 text-center mt-4">
+                <p class="fw-bold text-uppercase mb-0 border-bottom border-dark d-inline-block px-4">Hon. Roberto M. Santos</p>
+                <p class="mb-0">Punong Barangay</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Automatically fetch data when preview opens
+        document.addEventListener("DOMContentLoaded", async () => {
+            // Get resident ID and Purpose from URL (e.g., clearance.html?id=1&purpose=Employment)
+            const urlParams = new URLSearchParams(window.location.search);
+            const residentId = urlParams.get('id') || 1; // Default to ID 1 if not provided
+            const purposeParam = urlParams.get('purpose') || "General Employment";
+
+            // Set current date
+            const today = new Date().toLocaleDateString('en-US', { 
+                year: 'numeric', month: 'long', day: 'numeric' 
+            });
+            document.getElementById('issueDate').innerText = today;
+            document.getElementById('purpose').innerText = purposeParam;
+
+            try {
+                // Fetch resident data from our Spring Boot backend
+                const response = await fetch(`/api/residents/${residentId}`);
+                if (response.ok) {
+                    const resident = await response.json();
+                    document.getElementById('fullName').innerText = `${resident.firstName} ${resident.lastName}`;
+                    document.getElementById('civilStatus').innerText = resident.civilStatus;
+                    document.getElementById('zone').innerText = resident.zone;
+                } else {
+                    document.getElementById('fullName').innerText = "RESIDENT NOT FOUND";
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        });
+    </script>
+</body>
+</html>
