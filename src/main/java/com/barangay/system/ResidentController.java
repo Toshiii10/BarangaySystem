@@ -56,10 +56,36 @@ public class ResidentController {
         return residentService.getResidentsByZone(zone);
     }
 
-    // DELETE
+    // UPDATE
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateResident(@PathVariable Long id, @RequestBody Resident updatedData) {
+        return residentService.getResidentById(id).map(existingResident -> {
+            
+            // Note: If you want to prevent duplicate names on EDIT, you would add the guard here too!
+            
+            existingResident.setFirstName(updatedData.getFirstName());
+            existingResident.setLastName(updatedData.getLastName());
+            existingResident.setZone(updatedData.getZone());
+            existingResident.setCivilStatus(updatedData.getCivilStatus());
+            
+            Resident saved = residentRepository.save(existingResident);
+            return ResponseEntity.ok(saved);
+        }).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+   // DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteResident(@PathVariable Long id) {
-        residentService.deleteResident(id);
-        return ResponseEntity.noContent().build(); 
+    public ResponseEntity<?> deleteResident(@PathVariable Long id) {
+        try {
+            residentService.deleteResident(id);
+            return ResponseEntity.noContent().build(); 
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            // This catches the exact error when a resident has attached documents/blotters
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Cannot delete resident: This person has existing document requests or blotter records attached to their name.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An unexpected error occurred while deleting the resident.");
+        }
     }
 }
