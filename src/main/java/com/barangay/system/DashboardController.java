@@ -15,7 +15,6 @@ public class DashboardController {
     private final DocumentRequestRepository documentRepo;
     private final BlotterRecordRepository blotterRepo;
 
-    // Constructor Injection (Keeping the code warning-free)
     public DashboardController(ResidentRepository residentRepo, 
                                DocumentRequestRepository documentRepo, 
                                BlotterRecordRepository blotterRepo) {
@@ -28,9 +27,9 @@ public class DashboardController {
     public Map<String, Long> getDashboardStats() {
         Map<String, Long> stats = new HashMap<>();
         
-        // Fetch the counts from the database
         stats.put("totalResidents", residentRepo.count());
-        stats.put("pendingDocuments", documentRepo.countByStatus("Pending"));
+        // Updated this line to count requests waiting for Admin Approval
+        stats.put("pendingDocuments", documentRepo.countByStatus("PAID - PENDING REVIEW"));
         stats.put("activeBlotters", blotterRepo.countByStatus("Active"));
         
         return stats;
