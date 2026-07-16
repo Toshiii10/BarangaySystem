@@ -5,9 +5,12 @@ import java.util.List;
 
 public interface DocumentRequestRepository extends JpaRepository<DocumentRequest, Long> {
     
-    // Custom method to find all documents requested by a specific resident
-    List<DocumentRequest> findByResidentId(Long residentId);
+    // Checks if this resident already has an active request for this document
+    boolean existsByResidentIdAndDocumentTypeAndStatus(Long residentId, String documentType, String status);
     
-    // Custom method to see all pending requests that the Barangay Captain needs to sign
+    // Required for DashboardController stats
+    long countByStatus(String status);
+
+    // Required for DocumentRequestService pending requests
     List<DocumentRequest> findByStatus(String status);
 }

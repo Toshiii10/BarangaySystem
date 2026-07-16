@@ -1,3 +1,11 @@
+// --- FRONTEND SECURITY GUARD ---
+const role = localStorage.getItem('userRole');
+if (role !== 'ADMIN') {
+    // If they aren't an admin, kick them back to the login screen
+    window.location.href = '/login.html';
+}
+// -------------------------------
+
 document.addEventListener("DOMContentLoaded", loadBlotters);
 
 // Fetch and display all blotter records
@@ -69,4 +77,13 @@ async function settleCase(blotterId) {
     } else {
         alert("Error updating case status.");
     }
+}
+
+// Logout Logic
+const logoutBtn = document.getElementById('logoutBtn');
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', function() {
+        localStorage.clear(); // Wipe credentials
+        window.location.href = '/login.html'; // Send back to front door
+    });
 }

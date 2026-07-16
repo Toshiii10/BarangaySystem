@@ -5,9 +5,9 @@ import java.util.List;
 
 public interface ResidentRepository extends JpaRepository<Resident, Long> {
     
-    // Spring Boot is smart enough to generate the SQL for this just by the method name!
-    // This is equivalent to: SELECT * FROM residents WHERE zone = ?
-    List<Resident> findByZone(String zone);
+    // Checks if a resident with the exact first and last name already exists
+    boolean existsByFirstNameIgnoreCaseAndLastNameIgnoreCase(String firstName, String lastName);
     
-    // We can add more custom searches later, like findByLastName
+    // Required for ResidentService
+    List<Resident> findByZone(String zone);
 }

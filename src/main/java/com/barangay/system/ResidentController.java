@@ -1,5 +1,6 @@
 package com.barangay.system;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
@@ -12,16 +13,27 @@ import java.util.Optional;
 public class ResidentController {
 
     private final ResidentService residentService;
+    private final ResidentRepository residentRepository; // Added the missing repository
 
-    // Constructor Injection
-    public ResidentController(ResidentService residentService) {
+    // Constructor Injection updated to include ResidentRepository
+    public ResidentController(ResidentService residentService, ResidentRepository residentRepository) {
         this.residentService = residentService;
+        this.residentRepository = residentRepository;
     }
 
     // CREATE (With Validation)
     @PostMapping
-    public Resident addResident(@Valid @RequestBody Resident resident) {
-        return residentService.addResident(resident);
+    public ResponseEntity<?> addResident(@RequestBody Resident resident) {
+        
+        // --- ANTI-DUPLICATION GUARD ---
+        if (residentRepository.existsByFirstNameIgnoreCaseAndLastNameIgnoreCase(resident.getFirstName(), resident.getLastName())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                 .body("Error: A resident with this first and last name already exists in the system.");
+        }
+        // ------------------------------
+
+        Resident savedResident = residentRepository.save(resident);
+        return ResponseEntity.ok(savedResident);
     }
 
     // READ: All

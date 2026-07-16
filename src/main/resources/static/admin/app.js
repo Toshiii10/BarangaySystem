@@ -1,3 +1,11 @@
+// --- FRONTEND SECURITY GUARD ---
+const role = localStorage.getItem('userRole');
+if (role !== 'ADMIN') {
+    // If they aren't an admin, kick them back to the login screen
+    window.location.href = '/login.html';
+}
+// -------------------------------
+
 // 1. When the page loads, fetch the residents
 document.addEventListener("DOMContentLoaded", loadResidents);
 
@@ -55,3 +63,12 @@ document.getElementById('residentForm').addEventListener('submit', async functio
         alert("Error saving resident!");
     }
 });
+
+// Logout Logic
+const logoutBtn = document.getElementById('logoutBtn');
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', function() {
+        localStorage.clear(); // Wipe credentials
+        window.location.href = '/login.html'; // Send back to front door
+    });
+}
