@@ -1,3 +1,30 @@
+// --- SYSTEM NOTIFICATION HELPER ---
+function showToast(message, type = 'success') {
+    const toastElement = document.getElementById('systemToast');
+    const toastMessage = document.getElementById('toastMessage');
+
+    // Set the message text
+    toastMessage.textContent = message;
+
+    // Reset classes
+    toastElement.classList.remove('bg-success', 'bg-danger', 'bg-warning');
+
+    // Apply the correct color based on the type
+    if (type === 'success') {
+        toastElement.classList.add('bg-success');
+    } else if (type === 'error') {
+        toastElement.classList.add('bg-danger');
+    } else if (type === 'warning') {
+        toastElement.classList.add('bg-warning', 'text-dark');
+        // If it's warning, change the close button to dark mode so it's visible
+        toastElement.querySelector('.btn-close').classList.remove('btn-close-white');
+    }
+
+    // Initialize and show the Bootstrap Toast
+    const toast = new bootstrap.Toast(toastElement, { delay: 3000 }); // Fades out after 3 seconds
+    toast.show();
+}
+// ----------------------------------
 // --- FRONTEND SECURITY GUARD ---
 const role = localStorage.getItem('userRole');
 if (role !== 'ADMIN') {
