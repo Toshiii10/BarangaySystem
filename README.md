@@ -64,3 +64,5 @@ Password : admin123
 Role : Resident    
 Username : juan123      
 Password : password123
+
+---- On App Development ----
