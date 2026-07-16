@@ -1,17 +1,19 @@
 package com.barangay.system;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
 public class DocumentRequestService {
 
-    @Autowired
-    private DocumentRequestRepository documentRepository;
+    private final DocumentRequestRepository documentRepository;
+    private final ResidentRepository residentRepository;
 
-    @Autowired
-    private ResidentRepository residentRepository;
+    // Constructor Injection (This makes the VS Code warning go away)
+    public DocumentRequestService(DocumentRequestRepository documentRepository, ResidentRepository residentRepository) {
+        this.documentRepository = documentRepository;
+        this.residentRepository = residentRepository;
+    }
 
     // 1. Create a request linked to a specific resident
     public DocumentRequest createRequest(Long residentId, DocumentRequest request) {
@@ -26,8 +28,9 @@ public class DocumentRequestService {
         return documentRepository.save(request);
     }
 
-    // 2. Get all pending documents (for the Barangay Captain to review)
-    public List getPendingRequests() {
+    // 2. Get all pending documents 
+    // Added <DocumentRequest> to fix the raw type warning
+    public List<DocumentRequest> getPendingRequests() {
         return documentRepository.findByStatus("Pending");
     }
 }
