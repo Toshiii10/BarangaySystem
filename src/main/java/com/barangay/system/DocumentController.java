@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
+import java.util.List; // THIS FIXES THE LIST ERROR!
 
 @RestController
 @RequestMapping("/api/documents")
@@ -17,24 +18,20 @@ public class DocumentController {
         this.residentRepository = residentRepository;
     }
 
+    // Resident Submits a Request
     @PostMapping("/request/{residentId}")
     public ResponseEntity<?> requestDocument(@PathVariable Long residentId, @RequestBody DocumentRequest request) {
-        
-        // 1. Verify Resident exists
         Resident resident = residentRepository.findById(residentId).orElse(null);
         if (resident == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Resident not found.");
 
-        // 2. --- ANTI-DUPLICATION GUARD ---
-        // Check if they already have a "PENDING" request for this exact document type
         if (documentRepository.existsByResidentIdAndDocumentTypeAndStatus(residentId, request.getDocumentType(), "PENDING")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                 .body("Error: You already have a pending request for this document. Please wait for the admin to process it or complete your payment.");
+                                 .body("Error: You already have a pending request. Please wait for processing or complete your payment.");
         }
 
-        // 3. Set the defaults and save
         request.setResident(resident);
         request.setStatus("PENDING");
-        request.setAmountDue(100.00); // Set the standard P100 fee
+        request.setAmountDue(100.00); 
         request.setRequestDate(LocalDateTime.now());
         
         DocumentRequest savedRequest = documentRepository.save(request);
@@ -49,6 +46,30 @@ public class DocumentController {
         if (optRequest.isPresent()) {
             DocumentRequest request = optRequest.get();
             request.setStatus("PAID - PENDING REVIEW");
+            documentRepository.save(request);
+            return ResponseEntity.ok(request);
+        }
+        
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Document request not found.");
+    }
+
+    // --- NEW ADMIN PIPELINE METHODS ---
+
+    // Fetch all requests that are Paid and ready for Admin review
+    @GetMapping("/paid")
+    public ResponseEntity<List<DocumentRequest>> getPaidRequests() {
+        List<DocumentRequest> paidRequests = documentRepository.findByStatus("PAID - PENDING REVIEW");
+        return ResponseEntity.ok(paidRequests);
+    }
+
+    // Admin approves the document
+    @PutMapping("/{requestId}/approve")
+    public ResponseEntity<?> approveDocument(@PathVariable Long requestId) {
+        java.util.Optional<DocumentRequest> optRequest = documentRepository.findById(requestId);
+        
+        if (optRequest.isPresent()) {
+            DocumentRequest request = optRequest.get();
+            request.setStatus("APPROVED");
             documentRepository.save(request);
             return ResponseEntity.ok(request);
         }
