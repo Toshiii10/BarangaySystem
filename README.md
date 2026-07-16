@@ -60,3 +60,6 @@ The application includes a DataSeeder that automatically generates test accounts
 Role       Username       Password
 Admin       admin         admin123
 Resident    juan123      password123
+
+
+---- On App Development ----
