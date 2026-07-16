@@ -1,6 +1,6 @@
 # 🏛️ Barangay Management System
 
-> A secure, full-stack web application designed to digitize local government operations, resident profiling, and incident management for Barangay.
+> A secure, full-stack web application designed to digitize local government operations, resident profiling, and incident management for Barangay Luntian.
 
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
@@ -57,9 +57,9 @@ mvn spring-boot:run
 Test Accounts
 The application includes a DataSeeder that automatically generates test accounts upon startup.
 
-Role : Admin   
-Username : admin    
-Password : admin123    
+Role : Admin      
+Username : admin     
+Password : admin123
 
 Role : Resident    
 Username : juan123      
