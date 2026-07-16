@@ -143,15 +143,22 @@ document.getElementById('editResidentForm').addEventListener('submit', async fun
 // 3. Delete a Resident
 async function deleteResident(id) {
     if (confirm("Are you sure you want to delete this resident? This action cannot be undone.")) {
-        const response = await fetch(`/api/residents/${id}`, {
-            method: 'DELETE'
-        });
+        try {
+            const response = await fetch(`/api/residents/${id}`, {
+                method: 'DELETE'
+            });
 
-        if (response.ok) {
-            alert("Resident deleted successfully.");
-            loadResidents(); // Reload DataTables
-        } else {
-            alert("Error deleting resident.");
+            if (response.ok) {
+                alert("Resident deleted successfully.");
+                loadResidents(); // Reload DataTables
+            } else {
+                // THIS IS THE FIX: Read the exact error text from the backend
+                const errorMessage = await response.text();
+                alert(errorMessage || "Error deleting resident.");
+            }
+        } catch (error) {
+            console.error("Connection error:", error);
+            alert("An error occurred while communicating with the server.");
         }
     }
 }
