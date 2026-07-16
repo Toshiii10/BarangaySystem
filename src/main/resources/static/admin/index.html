@@ -6,10 +6,12 @@
     <title>Barangay Management System</title>
     <!-- Bootstrap for styling -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables Bootstrap 5 CSS -->
+    <link href="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.0.8/datatables.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
     
-    <!-- Navigation Bar (Updated with working links) -->
+    <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div class="container-fluid">
             <span class="navbar-brand mb-0 h1">Barangay Management System</span>
@@ -18,8 +20,9 @@
                 <a class="nav-link" href="index.html">Residents</a>
                 <a class="nav-link" href="blotter.html">Blotter Records</a>
             </div>
-        <div class="d-flex">
-            <button id="logoutBtn" class="btn btn-outline-light btn-sm">Logout</button>
+            <div class="d-flex">
+                <button id="logoutBtn" class="btn btn-outline-light btn-sm">Logout</button>
+            </div>
         </div>
     </nav>
 
@@ -56,13 +59,52 @@
             </div>
         </div>
 
+        <!-- Edit Resident Modal -->
+        <div class="modal fade" id="editResidentModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning text-dark">
+                        <h5 class="modal-title">Edit Resident</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editResidentForm">
+                            <input type="hidden" id="editResidentId">
+                            <div class="mb-3">
+                                <label class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="editFirstName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="editLastName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Zone / Purok</label>
+                                <input type="text" class="form-control" id="editZone" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Civil Status</label>
+                                <select class="form-select" id="editCivilStatus" required>
+                                    <option value="Single">Single</option>
+                                    <option value="Married">Married</option>
+                                    <option value="Widowed">Widowed</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-warning w-100 fw-bold">Update Resident</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Resident Data Table -->
         <div class="card shadow-sm">
             <div class="card-header bg-secondary text-white">
                 <h5 class="card-title mb-0">Resident Masterlist</h5>
             </div>
             <div class="card-body p-0">
-                <table class="table table-hover table-striped mb-0">
+                <!-- THE FIX IS HERE: id="residentTable" is now attached to the real table -->
+                <table class="table table-hover table-striped mb-0" id="residentTable">
                     <thead class="table-dark">
                         <tr>
                             <th>ID</th>
@@ -81,7 +123,13 @@
         </div>
     </div>
 
-    <!-- The JavaScript link -->
+    <!-- Bootstrap JS (Required for the Edit Modal to open and close) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- jQuery and DataTables Bootstrap 5 JS -->
+    <script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.0.8/datatables.min.js"></script>
+    
+    <!-- The JavaScript link (Must always be loaded LAST) -->
     <script src="app.js"></script>
 </body>
 </html>
