@@ -57,9 +57,12 @@ mvn spring-boot:run
 Test Accounts
 The application includes a DataSeeder that automatically generates test accounts upon startup.
 
-Role       Username       Password
-Admin       admin         admin123
-Resident    juan123      password123
+Role : Admin      
+Username : admin     
+Password : admin123
 
+Role : Resident    
+Username : juan123      
+Password : password123
 
 ---- On App Development ----
